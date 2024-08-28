@@ -16,14 +16,14 @@ context = alc.alcCreateContext(device, None)
 alc.alcMakeContextCurrent(context)
 
 # Cargar el sonido y obtener el oyente
-source = oalOpen('wav/bottle_pop.wav')
-duration = get_audio_duration('wav/bottle_pop.wav')
+source = oalOpen('wav/Psychosocial-mono.wav')
+duration = get_audio_duration('wav/Psychosocial-mono.wav')
 listener = oalGetListener()
 
 # 1. Simulación de acercamiento de pasos hacia el oyente
 print("Simulación de acercamiento de pasos hacia el oyente...")
-source.set_position((10, 0, 0))  # Comienza lejos
-source.set_gain(1.5)
+source.set_position((100, 0, 0))  # Comienza lejos
+source.set_gain(0.25)
 source.play()
 steps = 10
 step_duration = duration/steps
@@ -31,8 +31,8 @@ print(duration, step_duration)
 # Acercar la fuente al oyente
 for x in range(10, 0,-1):
     source.set_position((x, 0, 0))
-    source.play()
-    time.sleep(0.5)  # Espera para escuchar el cambio en la posición
+    #source.play()
+    time.sleep(step_duration)  # Espera para escuchar el cambio en la posición
     print(f"Fuente en posición: {x}")
 
 # Esperar a que termine la reproducción
