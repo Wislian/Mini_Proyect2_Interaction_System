@@ -16,8 +16,8 @@ context = alc.alcCreateContext(device, None)
 alc.alcMakeContextCurrent(context)
 
 # Cargar el sonido y obtener el oyente
-source = oalOpen('wav/Psychosocial-mono.wav')
-duration = get_audio_duration('wav/Psychosocial-mono.wav')
+source = oalOpen('resources/wav/bottle_pop.wav')
+duration = get_audio_duration('resources/wav/bottle_pop.wav')
 listener = oalGetListener()
 
 # 1. Simulación de acercamiento de pasos hacia el oyente
