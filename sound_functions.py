@@ -56,23 +56,23 @@ def open_file(sound_name:str):
             _check()
             file_ = WaveFile(sound_path)
             buffer_ = Buffer(file_)
-            source = ShortSound(buffer_, True)
+            source = Sound(buffer_, True)
             loaded_sounds[sound_name] = buffer_
         else:
             raise ValueError("Archivo no encontrado")
     else:
-        source = ShortSound(loaded_sounds[sound_name], True)
+        source = Sound(loaded_sounds[sound_name], True)
         
     return source
 
-class ShortSound(Source):
+class Sound(Source):
     """
     
     """
     def __init__(self, buffer_, destroy_buffer):
         super().__init__(buffer_, destroy_buffer)
     def copy(self):
-        return ShortSound(self.buffer, True)
+        return Sound(self.buffer, True)
     #def destroy(self):
     #    super.destroy()
 
@@ -107,47 +107,6 @@ class ShortSound(Source):
         self.set_position(final_point)  
 
     async def rotate(self, center, axis, angle_degrees,  steps = 100):
-        angle_rad = math.radians(angle_degrees)
-        step_angle = angle_rad / steps
-
-        x, y, z = self.position
-        cx, cy, cz = center
-
-        self.play()
-        self.set_looping(True)
-
-        for i in range(steps + 1):
-            current_angle = i * step_angle
-            x_translated = x - cx
-            y_translated = y - cy
-            z_translated = z - cz
-
-            if axis == 'x':
-                new_y = y_translated * math.cos(current_angle) - z_translated * math.sin(current_angle)
-                new_z = y_translated * math.sin(current_angle) + z_translated * math.cos(current_angle)
-                y_translated, z_translated = new_y, new_z
-            elif axis == 'y':
-                new_x = x_translated * math.cos(current_angle) + z_translated * math.sin(current_angle)
-                new_z = -x_translated * math.sin(current_angle) + z_translated * math.cos(current_angle)
-                x_translated, z_translated = new_x, new_z
-            elif axis == 'z':
-                new_x = x_translated * math.cos(current_angle) - y_translated * math.sin(current_angle)
-                new_y = x_translated * math.sin(current_angle) + y_translated * math.cos(current_angle)
-                x_translated, y_translated = new_x, new_y
-            else:
-                raise ValueError("Eje no válido. Use 'x', 'y' o 'z'.")
-
-            x1 = x_translated +cx
-            y1 = y_translated + cy
-            z1 = z_translated + cz
-
-            self.set_position((x1, y1, z1))
-
-            await asyncio.sleep(0.1)
-
-        self.set_looping(False)
-
-    async def rotate2(self, center, axis, angle_degrees,  steps = 100):
         angle_rad = math.radians(angle_degrees)
         step_angle = angle_rad / steps
 
@@ -209,6 +168,43 @@ def get_path():
     path = os.path.join(resource_dir, wav_subdir)
     #os.path.abspath(path)
     return path 
+
+async def proximation(sound_name, stop, sound_position, steps, time_alive, slow_stop, steps_alive):
+    global listener
+    source = open_file(sound_name)
+    source.set_position(sound_position)
+    source.set_looping(True)
+    source.set_gain(0.5)
+    source.play()
+    await asyncio.create_task(source.linear_mov(listener.position, steps, 0.5))
+    await asyncio.create_task(source.gain_up_soft(50))
+    if stop == True:
+        if slow_stop:
+            fade_duration = time_alive/steps_alive
+            for i in range(steps_alive):
+                new_gain = source.gain * (1 - (i + 1) / steps_alive)
+                source.set_gain(new_gain)
+                await asyncio.sleep(fade_duration)
+        else:
+            source.stop()
+            
+async def rotate(sound_name, stop, sound_position, axis, angle_degrees, steps, time_alive, slow_stop, steps_alive):
+    global Listener
+    source = open_file(sound_name)
+    source.set_position(sound_position)
+    source.set_looping(True)
+    source.play()
+    await asyncio.create_task(source.rotate(listener.position, axis, angle_degrees, steps))
+    if stop == True:
+        if slow_stop:
+            fade_duration = time_alive/steps_alive
+            for i in range(steps_alive):
+                new_gain = source.gain * (1 - (i + 1) / steps_alive)
+                source.set_gain(new_gain)
+                await asyncio.sleep(fade_duration)
+        else:
+            source.stop()
+
 
 
 async def main():

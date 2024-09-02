@@ -1,0 +1,2 @@
+node_id, function, function_parameters, text, story_options
+1, proximation, "bomb, True, (0,0,0), 1, 5, True, 10", "Estas en el suelo. Los ladrones han detonado una bomba ", "1 arrastrarse 2, 2  levantarse 3"
