@@ -1,2 +1,3 @@
-node_id, function, function_parameters, text, story_options
-1, proximation, "bomb, True, (0,0,0), 1, 5, True, 10", "Estas en el suelo. Los ladrones han detonado una bomba ", "1 arrastrarse 2, 2  levantarse 3"
+node_id,function,function_parameters,text,story_options
+1,proximation,"bomb True (0,0,0) (10,0,0) 1 5 True 10","Los ladrones han detonado una bomba.Estas en el suelo","1 arrastrarse 2/2 levantarse 1"
+2,rotate,"Psychosocial-mono True (0,0,0) (10,0,0) y 180 10 30 True 10","Prueba de procesos. Esta es una prueba","1 arrastrarse 2/2 morir 3"

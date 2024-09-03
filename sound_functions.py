@@ -1,67 +1,33 @@
 import math
+import multiprocessing
 from typing import Dict
 from openal import *
 from openal import _check
-from pydub import AudioSegment
 import time
-import asyncio
 import os
+import threading
+from util import fill_path_sound_files, get_path
 
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 
-sound_files: Dict[str,str]= {}
-loaded_sounds: Dict[str, any] = {}
-class SoundManager:
-    """Manage the input of the sounds"""
-
-    def __init__(self, path: str):
-        """
-        Load the sounds into the code
-        
-
-        Args:
-            path (str) : Path where the sounds located
-        """
-        self.path = path
-        self.fill_path_sound_files()
-
-    def fill_path_sound_files(self) -> None:
-        """
-        Fill the sound_files dictionary with sound names and file paths
-        """
-        try:
-            for file_name in os.listdir(self.path):
-                sound_name = os.path.splitext(file_name)[0]
-                file_path = os.path.join(self.path, file_name)
-                sound_files[sound_name] = file_path
-        except FileNotFoundError:
-            print(f"Error: no se encontro el directorio {self.path}")
-        except Exception as e:
-            print(f"Error inesperado o de nisvia: {e}")  
-    def list_sounds(self):
-        for i in loaded_sounds.keys():
-            print(f"{i} :, {loaded_sounds[i]}") 
-    def available_sounds(self):
-        print(sound_files)
-    
-
-def open_file(sound_name:str):
+def open_file(sound_name:str, shared_data):
     """
     Load a sound into memory
     """
-    if sound_name not in loaded_sounds:
-        if sound_name in sound_files:
-            sound_path = sound_files[sound_name]
+    #print('este es el otro proceso')
+    #print( shared_data['sound_files'])
+    #print(shared_data['loaded_sounds'])
+    if sound_name not in shared_data['loaded_sounds']:
+        if sound_name in  shared_data['sound_files']:
+            sound_path =  shared_data['sound_files'][sound_name]
             _check()
             file_ = WaveFile(sound_path)
             buffer_ = Buffer(file_)
             source = Sound(buffer_, True)
-            loaded_sounds[sound_name] = buffer_
+            shared_data['loaded_sounds'][sound_name] = buffer_
         else:
             raise ValueError("Archivo no encontrado")
     else:
-        source = Sound(loaded_sounds[sound_name], True)
+        source = Sound(shared_data['loaded_sounds'][sound_name], True)
         
     return source
 
@@ -73,10 +39,8 @@ class Sound(Source):
         super().__init__(buffer_, destroy_buffer)
     def copy(self):
         return Sound(self.buffer, True)
-    #def destroy(self):
-    #    super.destroy()
 
-    async def linear_mov(self, final_point:tuple, steps:int, pause_time: float):
+    def linear_mov(self, final_point:tuple, steps:int, pause_time: float):
         """
         Move the source from start_point to final_point in the number of steps
 
@@ -103,10 +67,10 @@ class Sound(Source):
             self.set_position((new_x, new_y, new_z))
             
             print(self.position)
-            await asyncio.sleep(pause_time)
+            #await asyncio.sleep(pause_time)
         self.set_position(final_point)  
 
-    async def rotate(self, center, axis, angle_degrees,  steps = 100):
+    def rotate(self, center, axis, angle_degrees,  steps = 100):
         angle_rad = math.radians(angle_degrees)
         step_angle = angle_rad / steps
 
@@ -140,17 +104,17 @@ class Sound(Source):
 
             self.set_position((x1, y1, z1))
 
-            await asyncio.sleep(0.1)
+            time.sleep(0.1)
     def gain_up(self, value):
         self.set_gain(self.gain + (value * 0.01))
     def gain_down(self, value):
         self.set_gain(self.gain - (value * 0.01))
-    async def gain_up_soft(self, value, steps = 10):
+    def gain_up_soft(self, value, steps = 10):
         delta = value/steps
         while self.gain < 1 and value > 0 :
             self.set_gain(self.gain+(delta * 0.01))
             value -= delta
-    async def gain_down_soft(self, value, steps = 10):
+    def gain_down_soft(self, value, steps = 10):
         while self.gain > 0 and value > 0 :
             delta = value/steps
             self.set_gain(self.gain-(delta * 0.01))
@@ -158,108 +122,128 @@ class Sound(Source):
 
 
 
-def wait_for_keypress():
-    input("Presiona cualquier tecla para continuar...")
+def play(sound_name, sound_position, stop = False):
+    source = open_file(sound_name)
+    source.set_position(sound_position)
+    source.play()
+    if stop == False:
+        pass
+        #await asyncio.sleep(0.1)
+    return stop
 
 
-def get_path():
-    resource_dir = 'resources'
-    wav_subdir = 'wav'
-    path = os.path.join(resource_dir, wav_subdir)
-    #os.path.abspath(path)
-    return path 
 
-async def proximation(sound_name, stop, sound_position, steps, time_alive, slow_stop, steps_alive):
+def proximation_worker(sound_name, stop,listener_position, sound_position, steps, time_alive, slow_stop, steps_alive, shared_data):
+        source = open_file(sound_name, shared_data)
+        source.set_position(sound_position)
+        source.set_looping(True)
+        source.set_gain(0.5)
+        source.play()
+        def linear_mov():
+            source.linear_mov(listener_position, steps, 0.5)
+        def gain_up_soft():
+            source.gain_up_soft(50)
+        thread_1 = threading.Thread(target=linear_mov)
+        thread_2 = threading.Thread(target=gain_up_soft)
+        thread_1.start()
+        thread_2.start()
+        thread_1.join()
+        thread_2.join()
+        if stop == True:
+            if slow_stop:
+                fade_duration = time_alive/steps_alive
+                for i in range(steps_alive):
+                    new_gain = source.gain * (1 - (i + 1) / steps_alive)
+                    source.set_gain(new_gain)
+                    time.sleep(fade_duration)
+        return stop
+def proximation(sound_name, stop,listener_position, sound_position, steps, time_alive, slow_stop, steps_alive, shared_data):
+    process = multiprocessing.Process(target = proximation_worker, args = (sound_name, stop,listener_position, sound_position, steps, time_alive, slow_stop, steps_alive, shared_data))
+    process.start()
+
+def rotate_worker(sound_name, stop,listener_position, sound_position, axis, angle_degrees, steps, time_alive, slow_stop, steps_alive, shared_data):
+    source = open_file(sound_name, shared_data)
+    source.set_position(sound_position)
+    source.set_looping(True)
+    source.play()
+    #def rotate_in():
+    source.rotate(listener_position, axis, angle_degrees, steps)
+    #thread_1 = threading.Thread(target=rotate_in)
+    #thread_1.start()
+    if stop == True:
+        if slow_stop:
+            fade_duration = time_alive/steps_alive
+            for i in range(steps_alive):
+                new_gain = source.gain * (1 - (i + 1) / steps_alive)
+                source.set_gain(new_gain)
+                time.sleep(fade_duration)
+    return stop
+
+def rotate(sound_name, stop,listener_position, sound_position, axis, angle_degrees, steps, time_alive, slow_stop, steps_alive, shared_data):
+    process = multiprocessing.Process(target=rotate_worker, args=(sound_name, stop,listener_position, sound_position, axis, angle_degrees, steps, time_alive, slow_stop, steps_alive, shared_data))
+    process.start()
+
+def change_listener_orientation(direction, degrees, duration):
     global listener
-    source = open_file(sound_name)
-    source.set_position(sound_position)
-    source.set_looping(True)
-    source.set_gain(0.5)
-    source.play()
-    await asyncio.create_task(source.linear_mov(listener.position, steps, 0.5))
-    await asyncio.create_task(source.gain_up_soft(50))
-    if stop == True:
-        if slow_stop:
-            fade_duration = time_alive/steps_alive
-            for i in range(steps_alive):
-                new_gain = source.gain * (1 - (i + 1) / steps_alive)
-                source.set_gain(new_gain)
-                await asyncio.sleep(fade_duration)
-        else:
-            source.stop()
-            
-async def rotate(sound_name, stop, sound_position, axis, angle_degrees, steps, time_alive, slow_stop, steps_alive):
-    global Listener
-    source = open_file(sound_name)
-    source.set_position(sound_position)
-    source.set_looping(True)
-    source.play()
-    await asyncio.create_task(source.rotate(listener.position, axis, angle_degrees, steps))
-    if stop == True:
-        if slow_stop:
-            fade_duration = time_alive/steps_alive
-            for i in range(steps_alive):
-                new_gain = source.gain * (1 - (i + 1) / steps_alive)
-                source.set_gain(new_gain)
-                await asyncio.sleep(fade_duration)
-        else:
-            source.stop()
+    """
+    Rota al jugador en la dirección dada ('up', 'down', 'right', 'left').
+    
+    :param direction: String que representa la dirección ('up', 'down', 'right', 'left').
+    :param degrees: Grados a rotar.
+    :param duration: Duración de la rotación en segundos.
+    """
+    # Descomponemos la orientación actual y la dirección de "arriba"
+    frontX, frontY, frontZ, upX, upY, upZ = listener.orientation
+    
+    # Convertimos grados a radianes
+    radians = math.radians(degrees)
 
+    # Calculamos el número de pasos para suavizar la rotación
+    steps = 100
+    step_duration = duration / steps
+    delta_radians = radians / steps
 
+    for i in range(steps):
+        if direction == 'right':
+            # Rotación alrededor del eje Y (hacia la derecha)
+            new_frontX = frontX * math.cos(delta_radians) - frontZ * math.sin(delta_radians)
+            new_frontZ = frontX * math.sin(delta_radians) + frontZ * math.cos(delta_radians)
+            frontX, frontZ = new_frontX, new_frontZ
+        elif direction == 'left':
+            # Rotación alrededor del eje Y (hacia la izquierda, rotación inversa)
+            new_frontX = frontX * math.cos(-delta_radians) - frontZ * math.sin(-delta_radians)
+            new_frontZ = frontX * math.sin(-delta_radians) + frontZ * math.cos(-delta_radians)
+            frontX, frontZ = new_frontX, new_frontZ
+        elif direction == 'up':
+            # Rotación alrededor del eje X (hacia arriba)
+            new_frontY = frontY * math.cos(delta_radians) - frontZ * math.sin(delta_radians)
+            new_frontZ = frontY * math.sin(delta_radians) + frontZ * math.cos(delta_radians)
+            frontY, frontZ = new_frontY, new_frontZ
+        elif direction == 'down':
+            # Rotación alrededor del eje X (hacia abajo, rotación inversa)
+            new_frontY = frontY * math.cos(-delta_radians) - frontZ * math.sin(-delta_radians)
+            new_frontZ = frontY * math.sin(-delta_radians) + frontZ * math.cos(-delta_radians)
+            frontY, frontZ = new_frontY, new_frontZ
 
-async def main():
+        # Actualizamos la orientación
+        listener.set_orientation((frontX, frontY, frontZ, upX, upY, upZ))
+
+        # Esperamos el tiempo de un paso
+        #await asyncio.sleep(step_duration) 
+
+def init(shared_data):
+    global listener
     oalInit()
+    listener = oalGetListener()
     device = alc.alcOpenDevice(None)
     context = alc.alcCreateContext(device, None)
     alc.alcMakeContextCurrent(context)
+    fill_path_sound_files(get_path(["resources","wav"]), shared_data)
 
-    sources = []
-    manager = SoundManager(get_path())
-    sources.append(open_file('dripping-water-in-cave-mono'))
-    #source = open_short('Psychosocial-mono')
-    listener = oalGetListener()
-    sources.append(open_file('bird-short'))
-    sources.append(open_file('bottle_pop'))
-    manager.list_sounds()
-    for i in sources:
-        print(i)
-
-    sources[0].set_position((0,0,20))
-    sources[1].set_position((-3,0,0))
-    sources[2].set_position((-4,0,0))
-
-    sources[0].set_looping(True)
-    sources[1].set_looping(True)
-    sources[2].set_looping(True)
-
-    sources[0].set_gain(0.5)
-
-    async def movement(source):
-         await source.linear_mov((10,-10,-10),15,0.5)
-         await source.linear_mov((0,0,0),5,0.5)
-        
-    for sound in sources:
-        sound.play()
-    task3 = asyncio.create_task(sources[0].linear_mov((0,0,3),15,0.5))
-    task4 = asyncio.create_task(sources[0].gain_up_soft(50))
-    task1 = asyncio.create_task(sources[1].rotate2(listener.position, "y", -90, 100))
-    task2 = asyncio.create_task(movement(sources[2]))
-    await task1
-    await task2
-    await task3
-    await task4
-    for sound in sources:
-        sound.set_looping(False)
-    #pasa por atras
-    #source.rotate(listener.position, "y", 90)
-    #wait_for_keypress()
-    #source.set_position((-10,0,0))
-    #pasa por adelante
-    #source.rotate(listener.position, "y", -90)
-
-    oalQuit()
-    alc.alcDestroyContext(context)
-    alc.alcCloseDevice(device)
-
-if __name__ == "__main__":
-    asyncio.run(main())
+def sound_worker(task_queue, shared_data):
+    while True:
+        task = task_queue.get()
+        if task == "STOP":
+            break
+        function, args = task
+        function(*args)
