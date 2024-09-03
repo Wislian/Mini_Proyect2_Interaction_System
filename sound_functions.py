@@ -162,10 +162,8 @@ def wait_for_keypress():
     input("Presiona cualquier tecla para continuar...")
 
 
-def get_path():
-    resource_dir = 'resources'
-    wav_subdir = 'wav'
-    path = os.path.join(resource_dir, wav_subdir)
+def get_path(dir):
+    path = os.path.join(*dir)
     #os.path.abspath(path)
     return path 
 
