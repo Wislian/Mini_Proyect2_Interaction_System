@@ -1,2 +1,5 @@
 node_id, function, function_parameters, text, story_options
-1, proximation, "bomb, True, (0,0,0), 1, 5, True, 10", "Estas en el suelo. Los ladrones han detonado una bomba ", "1 arrastrarse 2, 2  levantarse 3"
+1,proximation,"Psychosocial-mono True (0,0,0) (10,0,0) 10 20 True 20","hola","task/play"
+2,Text,"hola","Los ladrones han detonado una bomba.Estas en el suelo","1 arrastrarse 3/2 levantarse 3"
+3,rotate,"bird-short True (0,0,0) (-3,0,0) y 180 100 30 True 30","Prueba de procesos. Esta es una prueba","task/play"
+4,Text,"hola","Ahora el sonido debe girar. Tienes que correr","1 saltar 4/2 rodear 5"
