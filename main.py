@@ -1,6 +1,5 @@
 from sound_functions import *
 from csv_reader import *
-import asyncio
 from type_functions import *
 from utils import clear_screen
 

@@ -3,13 +3,9 @@ import threading
 from typing import Dict
 from openal import *
 from openal import _check
-from pydub import AudioSegment
 import time
 import asyncio
 import os
-
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 
 sound_files: Dict[str,str]= {}
 loaded_sounds: Dict[str, any] = {}
