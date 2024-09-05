@@ -21,21 +21,25 @@ def main():
         options = story_nodes[current_node]['story_options'].split('/')
         func, params = story_nodes[current_node]['function'], story_nodes[current_node]['function_parameters'] 
         
-        if func != "Text":
+        if func != "Decision" and func != "Text":
             if options[0] =='task':
+                time.sleep(int(story_nodes[current_node]["time_until_play"]))
                 #func_exe, params_exe = execute_action(func, params)
                 #thread = threading.Thread(target=func_exe, args=(params_exe))
                 thread = threading.Thread(target = execute_action, args=(func, params))
-                if options[1] == 'stop':
-                    threads.append(thread)
+                threads.append(thread)
                 current_node += 1
                 thread.start()
-            #time.sleep(2)     
-        else:
-            for thread in threads:
-                thread.join()
+            #time.sleep(2)
+        elif func =="Text":
+            lines = story_nodes[current_node]['text'].split('.')
+            clear_screen()
+            print_w(lines[1])
+            print_typing(lines[0])
+            time.sleep(1)
             threads.clear()
-
+            current_node += 1
+        else:
             lines = story_nodes[current_node]['text'].split('.')
             clear_screen()
             print_w(lines[0])
@@ -53,6 +57,9 @@ def main():
                 elif option == 2:
                     print(f'se presiono 2 {op2[2]}')
                     current_node = int(op2[2])
+                elif options == 0:
+                    for thread in threads:
+                        thread.join()
             threads.clear()
     print('Exit.............')
     alc.alcMakeContextCurrent(None)
