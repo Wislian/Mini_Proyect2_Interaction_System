@@ -73,7 +73,7 @@ class Sound(Source):
     #def destroy(self):
     #    super.destroy()
 
-    def linear_mov(self, final_point:tuple, steps:int, pause_time: float):
+    def linear_mov(self, final_point:tuple, steps:int, time: float):
         """
         Move the source from source position to final_point in the number of steps
 
@@ -85,6 +85,7 @@ class Sound(Source):
         if steps <= 0:
             raise ValueError("el numero de pasos debe ser positivo")
 
+        pause_time = time/steps
         x_start, y_start, z_start = self.position
         x_end, y_end, z_end = final_point
         
@@ -97,19 +98,17 @@ class Sound(Source):
             new_z = z_start + (step + 1) * z_step
         
             self.set_position((new_x, new_y, new_z))
-            
-            #print(self.position)
+
             time.sleep(pause_time) 
-            #await asyncio.sleep(pause_time)
         self.set_position(final_point)  
 
-    def rotate(self, center =(0,0,0), axis = 'x', angle_degrees = 90,  steps = 100):
+    def rotate(self, center =(0,0,0), axis = 'x', angle_degrees = 90,  steps = 100, time_alive = 5):
         angle_rad = math.radians(angle_degrees)
         step_angle = angle_rad / steps
 
         x, y, z = self.position
         cx, cy, cz = center
-
+        pause_time = time_alive/steps
         for i in range(steps + 1):
             current_angle = i * step_angle
             x_translated = x - cx
@@ -137,8 +136,7 @@ class Sound(Source):
 
             self.set_position((x1, y1, z1))
 
-            time.sleep(0.1)
-            #await asyncio.sleep(0.1)
+            time.sleep(pause_time)
 
     def gain_up(self, value):
         self.set_gain(self.gain + (value * 0.01))
@@ -169,43 +167,42 @@ def get_path(dir):
     #os.path.abspath(path)
     return path 
 
-def proximation(sound_name, stop,listener_position, sound_position, steps, time_alive, slow_stop, steps_alive):
+def proximation(sound_name, stop,listener_position, sound_position, steps, time_alive, slow_stop, time_stop):
     source = open_file(sound_name)
     source.set_position(sound_position)
-    source.set_looping(True)
+    #source.set_looping(True)
     source.set_gain(0.5)
     source.play()
-    linear_thread = threading.Thread(target = source.linear_mov, args=(listener_position, steps, 0.5))
+    linear_thread = threading.Thread(target = source.linear_mov, args=(listener_position, steps, time_alive))
     gain_thread = threading.Thread(target = source.gain_up_soft, args = (50,))
     linear_thread.start()
     gain_thread.start()
-    linear_thread.join()
-    gain_thread.join()
+    time.sleep(time_alive)
     if stop == True:
         if slow_stop:
-            fade_duration = time_alive/steps_alive
-            for i in range(steps_alive):
-                new_gain = source.gain * (1 - (i + 1) / steps_alive)
+            fade_duration = time_stop/100
+            for i in range(100):
+                new_gain = source.gain * (1 - (i + 1) / 100)
                 source.set_gain(new_gain)
                 time.sleep(fade_duration)
+            source.stop()
         else:
             source.stop()
             
-def rotate(sound_name, stop, listener_position,  sound_position, axis, angle_degrees, steps, time_alive, slow_stop, steps_alive):
+def rotate(sound_name, stop, listener_position,  sound_position, axis, angle_degrees, steps, time_alive, slow_stop, time_stop):
     source = open_file(sound_name)
     source.set_position(sound_position)
-    source.set_looping(True)
     source.play()
-    rotate_thread = threading.Thread(target= source.rotate, args=(listener_position, axis, angle_degrees, steps))
-    rotate_thread.start()
-    rotate_thread.join()
+    source.rotate(listener_position, axis, angle_degrees, steps, time_alive)
+
     if stop == True:
         if slow_stop:
-            fade_duration = time_alive/steps_alive
-            for i in range(steps_alive):
-                new_gain = source.gain * (1 - (i + 1) / steps_alive)
+            fade_duration = time_stop/100
+            for i in range(100):
+                new_gain = source.gain * (1 - (i + 1) / 100)
                 source.set_gain(new_gain)
                 time.sleep(fade_duration)
+            source.stop()
         else:
             source.stop()
 
@@ -258,5 +255,4 @@ def change_listener_orientation(listener:Listener, direction, degrees, duration)
 def play(sound_name, sound_position):
     source = open_file(sound_name)
     source.set_position(sound_position)
-    source.set_looping(True)
     source.play()

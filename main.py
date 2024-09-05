@@ -37,7 +37,7 @@ def main():
             #time.sleep(2)
         elif func =="Text":
             lines = story_nodes[current_node]['text'].split('.')
-            clear_screen()
+            #clear_screen()
             print_w(lines[1])
             print_typing(lines[0])
             time.sleep(1)
@@ -45,7 +45,7 @@ def main():
             current_node += 1
         else:
             lines = story_nodes[current_node]['text'].split('.')
-            clear_screen()
+            #clear_screen()
             print_w(lines[0])
             print_typing(lines[1])
             time.sleep(1)

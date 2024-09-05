@@ -1,6 +1,6 @@
 node_id, function, function_parameters, text, story_options, time_until_play
-1,play,"bottle_pop (10,0,0)","hola","task/play",0
+1,play,"disparo (10,0,0)","hola","task/play",0
 2,change_listener_orientation,"right 90 5","prueba","task/play",0
 3,Text,"hola","Los ladrones han detonado una bomba.Estas en el suelo","1 arrastrarse 3/2 levantarse 3", 2
-4,rotate,"bird-short True (0,0,0) (-3,0,0) y 180 100 30 True 30","Prueba de procesos. Esta es una prueba","task/play",2
+4,rotate,"tiroteo True (0,0,0) (-10,0,0) y 180 100 4 True 1","Prueba de procesos. Esta es una prueba","task/play",0
 5,Decision,"hola","Ahora el sonido debe girar. Tienes que correr","1 saltar 4/2 rodear 5", 1
