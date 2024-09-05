@@ -73,7 +73,7 @@ class Sound(Source):
     #def destroy(self):
     #    super.destroy()
 
-    def linear_mov(self, final_point:tuple, steps:int, time: float):
+    def linear_mov(self, final_point:tuple, steps:int, time_alive: float):
         """
         Move the source from source position to final_point in the number of steps
 
@@ -85,7 +85,7 @@ class Sound(Source):
         if steps <= 0:
             raise ValueError("el numero de pasos debe ser positivo")
 
-        pause_time = time/steps
+        pause_time = time_alive/steps
         x_start, y_start, z_start = self.position
         x_end, y_end, z_end = final_point
         
