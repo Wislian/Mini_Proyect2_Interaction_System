@@ -1,6 +1,9 @@
 node_id, function, function_parameters, text, story_options, time_until_play
-1,play,"disparo (10,0,0)","hola","task/play",0
-2,change_listener_orientation,"right 90 5","prueba","task/play",0
-3,Text,"hola","Los ladrones han detonado una bomba.Estas en el suelo","1 arrastrarse 3/2 levantarse 3", 2
-4,rotate,"tiroteo True (0,0,0) (-10,0,0) y 180 100 4 True 1","Prueba de procesos. Esta es una prueba","task/play",0
-5,Decision,"hola","Ahora el sonido debe girar. Tienes que correr","1 saltar 4/2 rodear 5", 1
+1,rotate,"tiroteo True (0,0,0) (-10,0,0) y -180 100 4 True 1","Los ladrones han iniciado un tiroteo","task/play",0
+2,Decision,"hola","los ladrones le han disparado a los policias. Estas detras de una patrulla","1 esconderse 4/2 correr 3",3
+3,proximation,"corriendo True (0,0,0) (0,-10,0) 100 4 True 1","corriendo","task/play",0
+4,rotate,"explosion True (0,0,0) (0,0,0) y 180 100 1 True 1","explosion","task/play",5
+5,rotate,"sonidoRinging True (0,0,0) (0,0,0) y 180 100 5 True 10","sonido luego de la explosion","task/play",2
+6,Text,"hola","los ladrones han explotado una bomba y no escuchas nada. No sabes donde estas","1 levanterse 6/2 levantarse 6",2
+7,rotate,"gritos True (0,0,0) (-3,0,0) y 180 100 2 True 2","gritos","task/play",1
+8,Exit,"1","1","task/play","0"

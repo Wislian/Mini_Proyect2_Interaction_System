@@ -1,8 +1,7 @@
 import os
 
 def clear_screen():
-    # Verifica el sistema operativo
-    if os.name == 'nt':  # Windows
+    if os.name == 'nt':
         os.system('cls')
-    else:  # Unix/Linux/MacOS
+    else:  
         os.system('clear')
