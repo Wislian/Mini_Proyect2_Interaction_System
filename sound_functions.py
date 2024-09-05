@@ -209,59 +209,54 @@ def rotate(sound_name, stop, listener_position,  sound_position, axis, angle_deg
         else:
             source.stop()
 
-async def main():
-    oalInit()
-    device = alc.alcOpenDevice(None)
-    context = alc.alcCreateContext(device, None)
-    alc.alcMakeContextCurrent(context)
+def change_listener_orientation(listener:Listener, direction, degrees, duration):
+    print(listener.position)
+    """
+    :param direction: String que representa la dirección ('up', 'down', 'right', 'left').
+    :param degrees: Grados a rotar.
+    :param duration: Duración de la rotación en segundos.
+    """
+    # Descomponemos la orientación actual y la dirección de "arriba"
+    frontX, frontY, frontZ, upX, upY, upZ = listener.orientation
+    
+    # Convertimos grados a radianes
+    radians = math.radians(degrees)
 
-    sources = []
-    manager = SoundManager(get_path(["resources","wav"]))
-    sources.append(open_file('dripping-water-in-cave-mono'))
-    #source = open_short('Psychosocial-mono')
-    listener = oalGetListener()
-    sources.append(open_file('bird-short'))
-    sources.append(open_file('bottle_pop'))
-    manager.list_sounds()
-    for i in sources:
-        print(i)
+    # Calculamos el número de pasos para suavizar la rotación
+    steps = 100
+    step_duration = duration / steps
+    delta_radians = radians / steps
 
-    sources[0].set_position((0,0,20))
-    sources[1].set_position((-3,0,0))
-    sources[2].set_position((-4,0,0))
+    for i in range(steps):
+        if direction == 'right':
+            # Rotación alrededor del eje Y (hacia la derecha)
+            new_frontX = frontX * math.cos(delta_radians) - frontZ * math.sin(delta_radians)
+            new_frontZ = frontX * math.sin(delta_radians) + frontZ * math.cos(delta_radians)
+            frontX, frontZ = new_frontX, new_frontZ
+        elif direction == 'left':
+            # Rotación alrededor del eje Y (hacia la izquierda, rotación inversa)
+            new_frontX = frontX * math.cos(-delta_radians) - frontZ * math.sin(-delta_radians)
+            new_frontZ = frontX * math.sin(-delta_radians) + frontZ * math.cos(-delta_radians)
+            frontX, frontZ = new_frontX, new_frontZ
+        elif direction == 'up':
+            # Rotación alrededor del eje X (hacia arriba)
+            new_frontY = frontY * math.cos(delta_radians) - frontZ * math.sin(delta_radians)
+            new_frontZ = frontY * math.sin(delta_radians) + frontZ * math.cos(delta_radians)
+            frontY, frontZ = new_frontY, new_frontZ
+        elif direction == 'down':
+            # Rotación alrededor del eje X (hacia abajo, rotación inversa)
+            new_frontY = frontY * math.cos(-delta_radians) - frontZ * math.sin(-delta_radians)
+            new_frontZ = frontY * math.sin(-delta_radians) + frontZ * math.cos(-delta_radians)
+            frontY, frontZ = new_frontY, new_frontZ
 
-    sources[0].set_looping(True)
-    sources[1].set_looping(True)
-    sources[2].set_looping(True)
+        # Actualizamos la orientación
+        listener.set_orientation((frontX, frontY, frontZ, upX, upY, upZ))
 
-    sources[0].set_gain(0.5)
+        time.sleep(step_duration) 
 
-    async def movement(source):
-         await source.linear_mov((10,-10,-10),15,0.5)
-         await source.linear_mov((0,0,0),5,0.5)
-        
-    for sound in sources:
-        sound.play()
-    #task3 = asyncio.create_task(sources[0].linear_mov((0,0,3),15,0.5))
-    #task4 = asyncio.create_task(sources[0].gain_up_soft(50))
-    task1 = asyncio.create_task(sources[1].rotate(listener.position, "y", -180, 100))
-    #task2 = asyncio.create_task(movement(sources[2]))
-    await task1
-    #await task2
-    #await task3
-    #await task4
-    for sound in sources:
-        sound.set_looping(False)
-    #pasa por atras
-    #source.rotate(listener.position, "y", 90)
-    #wait_for_keypress()
-    #source.set_position((-10,0,0))
-    #pasa por adelante
-    #source.rotate(listener.position, "y", -90)
 
-    oalQuit()
-    alc.alcDestroyContext(context)
-    alc.alcCloseDevice(device)
-
-#if __name__ == "__main__":
-#    asyncio.run(main())
+def play(sound_name, sound_position):
+    source = open_file(sound_name)
+    source.set_position(sound_position)
+    source.set_looping(True)
+    source.play()

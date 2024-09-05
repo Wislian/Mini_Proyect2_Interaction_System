@@ -23,6 +23,10 @@ def main():
         
         if func != "Decision" and func != "Text":
             if options[0] =='task':
+                params = params.split()
+                if func == "change_listener_orientation":
+                    params.insert(0,listener)
+                print(params)
                 time.sleep(int(story_nodes[current_node]["time_until_play"]))
                 #func_exe, params_exe = execute_action(func, params)
                 #thread = threading.Thread(target=func_exe, args=(params_exe))

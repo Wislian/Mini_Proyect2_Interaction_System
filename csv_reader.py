@@ -10,15 +10,18 @@ def parse_parameter(param):
         return param
 
 
-def execute_action(function_name, params_str):
+def execute_action(function_name, params):
     function = globals().get(function_name)
     if not function:
         function = getattr(sound_functions, function_name, None)
     if function:
-        params = [parse_parameter(param.strip()) for param in params_str.split(' ')]
-        #print(params)
-        function(*params)
-        #return function, params
+        #params = [parse_parameter(param.strip()) for param in params_str.split(' ')]
+        #function(*params)
+        processed_params = [
+            param if not isinstance(param, str) else parse_parameter(param.strip()) 
+            for param in params
+        ]
+        function(*processed_params)
     else:
         print(f"Function '{function_name}' not found!")
 
