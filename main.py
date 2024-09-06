@@ -28,16 +28,15 @@ def main():
 
             elif func =="Text":
                 lines = story_nodes[current_node]['text'].split('.')
-                #clear_screen()
-                print_w(lines[1])
+                clear_screen()
                 print_typing(lines[0])
                 time.sleep(1)
                 threads.clear()
-                current_node += 1
+                current_node = int(options[0])
 
             elif func == "Decision":
                 lines = story_nodes[current_node]['text'].split('.')
-                #clear_screen()
+                clear_screen()
                 print_w(lines[0])
                 print_typing(lines[1])
                 time.sleep(1)
