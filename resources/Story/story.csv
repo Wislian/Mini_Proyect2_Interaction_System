@@ -1,0 +1,115 @@
+node_id, function, function_parameters, text, story_options, time_until_play
+1,Text,"hola","Un grupo de delincuentes ha lanzado un audaz intento de rescatar a uno de los suyos, un criminal de alto rango vinculado a una poderosa organización narcotraficante.","2/",0 
+2,rotate,"carros True (0,0,0) (0,0,-5) y 180 100 4 True 1","","task/play",0
+3,proximation,"citySound True (0,-10,0) (0,-10,0) 100 15 True 2","","task/play",0
+4,proximation,"choque True (0,0,5) (0,0,5) 100 4 True 1","","task/play",1
+5,rotate,"tiroteo True (0,0,0) (-3,0,0) y 180 100 7 True 4","","task/play",2
+6,rotate,"tiroteo True (0,0,0) (-3,0,0) y 180 100 7 True 4","","task/play",2
+7,rotate,"gritos True (0,0,0) (20,0,0) y 180 100 7 True 4","","task/play",1
+8,rotate,"gritos True (0,0,0) (-20,0,0) y 180 100 7 True 4","","task/play",0
+9,proximation,"gritos True (0,0,-10) (0,0,-40) 100 7 True 4","","task/play",1
+10,Decision,"hola","los ladrones han iniciado un tiroteo en medio de la calle. No sabes que esta pasando","1 esconderse 15/2 correr 11",13
+11,proximation,"citySound True (0,-10,0) (0,-10,0) 100 20 True 10","","task/play",0
+12,play,"puertaCarro (0,0,0)","","task/play",1
+13,rotate,"carros True (0,0,0) (0,0,-5) y 180 100 4 True 1","","task/play",0
+14,proximation,"corriendo True (0,0,0) (0,0,0) 100 4 True 1","","task/play",4
+15,proximation,"respiracion True (0,0,0) (0,-10,0) 100 4 True 1","","task/play",1
+16,play,"explosion (0,0,0)","","task/play",3
+17,rotate,"sonidoRinging True (0,0,0) (0,0,0) y 180 100 10 True 6","","task/play",0
+18,Text,"hola","te has quedado sin oir nada por unos segundos y ves al ladron intentando huir","19/",2
+19,proximation,"citySound True (0,-10,0) (0,-10,0) 100 20 True 10","","task/play",0
+20,rotate,"gritos True (0,0,0) (-20,0,0) y 180 100 20 True 10","","task/play",0
+21,proximation,"corriendo True (0,0,0) (0,0,0) 100 4 True 1","","task/play",1
+22,proximation,"respiracion True (0,0,0) (0,-10,0) 100 4 True 1","","task/play",1
+23,Text,"hola","Empiezas a perseguir al ladron","24/",5
+24,play,"recargarArma (0,-3,0)","","task/play",0
+25,Text,"hola","Te detienes a recargar tu arma","26/",3
+26,proximation,"respiracion True (0,0,0) (0,-10,0) 100 4 True 1","","task/play",0
+27,Text,"hola","Tienes un total de 3 balas","28/",1
+28,Decision,"hola","El ladron esta a unos pocos metros. Quieres disparar?","1 disparar 29/2 seguir 35",2
+29,proximation,"citySound True (0,-10,0) (0,-10,0) 100 15 True 5","","task/play",0
+30,proximation,"disparo True (0,0,10) (0,0,0) 100 4 True 1","","task/play",0
+31,Text,"hola",",,,","32/",8
+32,Text,"hola","Fallaste el tiro y ahora solo te quedan 2 balas","33/",8
+33,proximation,"corriendo True (0,0,5) (0,0,5) 100 4 True 1","","task/play",0
+34,Text,"hola","El ladron ha empezado a correr mas rapido","35/",2
+35,proximation,"corriendo True (0,0,0) (0,0,0) 100 4 True 1","","task/play",0
+36,proximation,"respiracion True (0,0,0) (0,-10,0) 100 4 True 1","","task/play",0
+37,proximation,"caminarTierra True (0,0,0) (0,0,0) 100 4 True 1","","task/play",1
+38,proximation,"respiracion True (0,-10,0) (0,-10,0) 100 3 True 1","","task/play",1
+39,proximation,"citySound True (0,-10,0) (0,-10,0) 100 20 True 10","","task/play",0
+40,Text,"hola","Te encuentras en un parque a unos metros del lugar de la explosion y ves al ladron subiendo un muro","41/",2
+41,play,"caida (0,0,-10)","","task/play",0
+42,Text,"hola","El ladron se ha caido del muro","43/",1
+43,play,"caida (0,-3,0)","","task/play",0
+44,Text,"hola","Tu tambien caes del muro","45/",1
+45,proximation,"pisadasCemento True (0,0,0) (0,0,0) 100 5 True 2","","task/play",3
+46,Text,"hola","Te levantas y sigues caminando por una pequeña calle","47/",2
+47,proximation,"romperVidrio True (0,0,0) (-10,0,10) 100 6 True 1","","task/play",2
+48,Text,"hola","El ladron entro en una casa","49/",4
+49,proximation,"citySound True (0,-10,0) (0,-10,0) 100 20 True 10","","task/play",0
+50,Decision,"hola","El ladron entro en una casa. Tu tambien entras por la ventana?","1 entrar 57/2 rodear 51",3
+51,proximation,"corriendo True (0,0,0) (0,-10,0) 100 4 True 1","","task/play",0
+52,proximation,"respiracion True (0,0,0) (0,-10,0) 100 4 True 1","","task/play",1
+53,Text,"hola","Hay una puerta","54/",2
+54,play,"abrirPuerta (0,0,0)","","task/play",0
+55,Text,"hola","Entras por la puerta","56/",2
+56,Text,"hola","","60/",2
+57,proximation,"romperVidrio True (0,0,0) (0,0,0) 100 6 True 1","","task/play",2
+58,play,"caida (0,-3,0)","","task/play",3
+59,Text,"hola","tu tambien entras por la ventana","60/",0
+60,proximation,"BuildSound True (0,5,0) (0,5,0) 100 60 True 10","sonido ambiental","task/play",1
+61,proximation,"subirEscaleras True (0,20,0) (0,15,0) 100 8 True 1","e","task/play",1
+62,rotate,"pisadasMadera True (0,0,0) (-15,15,10) y -140 100 10 True 2","e","task/",5
+63,proximation,"pisadasMadera True (0,0,0) (0,0,0) 100 4 True 1","caminar madera","task/play",1
+64,Text,"hola","El ladron ha subido por las escaleras, tienes que ser precavido escuchas que se mueve por la izquierda","65/",0
+65,proximation,"rainBuild True (0,120,0) (0,120,0) 100 50 True 10","caminar madera","task/play",3
+66,proximation,"subirEscaleras True (0,4,0) (0,3,0) 100 4 True 1","e","task/play",1
+67,Text,"hola","Tu tambien subes por las escaleras","68/",2
+68,proximation,"abrirPuerta True (-3,15,0) (-3,15,0) 100 4 True 1","","task/play",0
+69,Text,"hola","Escuchas una puerta, parece que se ha escondido en una habitacion","70/",2
+70,proximation,"subirEscaleras True (0,4,0) (0,3,0) 100 4 True 1","subiendo escaleras","task/play",2
+71,Text,"hola","Sigues subiendo las escaleras y llegas a un pasillo","72/",1
+72,rotate,"pisadasMadera True (0,0,0) (0,0,1) y -90 100 1 True 1","caminar madera","task/play",1
+73,Decision,"hola","hay dos habitaciones una a la izquierda y otra a la derecha. Cual eliges","1 izquierda 74/2 Derecha 88",3
+74,rotate,"pisadasMadera True (0,0,0) (0,0,1) y -90 100 2 True 1","caminar madera","task/play",2
+75,proximation,"pisadasMadera True (0,0,0) (0,0,0) 100 4 True 1","caminar madera","task/play",2
+76,proximation,"abrirPuerta True (0,0,0) (0,0,0) 100 4 True 1","abrir puerta","task/play",5
+77,play,"avePicoteando (-10,0,0)","Escuchas algo","task/play",4
+78,Text,"hola","Escuchas algo cerca a la ventana","79/",2
+79,proximation,"pisadasMadera True (0,0,0) (0,0,0) 100 4 True 1","caminar madera","task/play",3
+80,Text,"hola","caminas hacia la ventana","81/",1
+81,proximation,"abrirVentana True (0,0,5) (0,0,0) 100 4 True 1","abrir ventana","task/play",2
+82,proximation,"sonidoAve True (-10,0,0) (-10,0,0) 100 4 True 1","ave picoteando","task/play",3
+83,Text,"hola","Solo era una pequeña ave","84/",2
+84,proximation,"abrirVentana True (0,0,5) (0,0,0) 100 4 True 1","abrir ventana","task/play",4
+85,rotate,"pisadasMadera True (0,0,0) (0,0,1) y 180 100 1 True 1","caminar madera","task/play",0
+86,proximation,"pisadasMadera True (0,0,0) (0,0,0) 100 4 True 1","caminar madera","task/play",2
+87,Text,"hola","Caminas nuevamente al pasillo","88/",2
+88,rotate,"pisadasMadera True (0,0,0) (0,0,1) y -90 100 2 True 1","caminar madera","task/play",2
+89,proximation,"abrirPuerta True (0,0,0) (0,0,0) 100 4 True 1","abrir puerta","task/play",3
+90,Text,"hola","Abres la puerta derecha","91/",2
+91,proximation,"pisadasMadera True (0,0,0) (0,0,0) 100 4 True 1","caminar madera","task/play",2
+92,play,"objetoCae (-5,0,10)","abrir puerta","task/play",4
+93,Text,"hola","Escuchaste algo caer","94/",2
+94,rotate,"pisadasMadera True (0,0,0) (0,0,1) y -30 100 1 True 1","caminar madera","task/play",0
+95,proximation,"pisadasMadera True (0,0,0) (0,0,0) 100 4 True 1","caminar madera","task/play",2
+96,proximation,"cajaMusical True (0,0,0) (0,0,0) 100 20 True 5","caja musical","task/play",3
+97,Text,"hola","Encuentras una caja musical","98/",1
+98,proximation,"moverMesa True (15,0,0) (15,0,0) 100 3 True 2","mover mesa","task/play",5
+99,Text,"hola","Escuchaste algo extraño nuevamente","100/",1
+100,proximation,"pisadasMadera True (0,0,0) (0,0,0) 100 4 True 1","caminar madera","task/play",2
+101,play,"respiracion (0,0,15)","respiracion","task/play",1
+102,proximation,"heartBeat True (0,-10,0) (0,-10,0) 100 10 True 3","mover mesa","task/play",1
+103,Decision,"hola","Escuchas una respiracion al fondo de la habitacion. Estas un poco asustado","1 acercarme 104/2 disparar 110",3
+104,proximation,"BuildRun True (0,0,0) (0,0,4) 100 4 True 1","correr","task/play",2
+105,play,"apunalada (0,0,0)","apuñalar","task/play",3
+106,proximation,"gritoDolor True (0,0,0) (0,0,0) 100 4 True 1","caminar madera","task/play",1
+107,proximation,"bodyFall True (0,0,0) (0,0,4) 100 4 True 1","correr","task/play",0
+108,proximation,"BuildRun True (7,-8,-15) (0,0,0) 100 10 True 2","correr","task/play",0
+109,Text,"hola","Perdiste el ladron te mato y ha escapado ya no podras llegar a casa a ver el final de One Piece","110/",0
+110,proximation,"sirenapolicia True (0,-10,-10) (0,0,-60) 100 10 True 1","disparar","task/play",0
+111,proximation,"disparo True (0,0,5) (0,0,0) 100 4 True 1","disparar","task/play",0
+112,proximation,"gritoDolor True (0,0,15) (0,0,15) 100 4 True 1","grito dolor","task/play",2
+113,Text,"hola","Disparaste tu arma en la pierna del ladron y lo has detenido, se acercan sirenas de policia y seras ascendido a coronel","114/",0
+114,Exit,"1","1","task/play",0
